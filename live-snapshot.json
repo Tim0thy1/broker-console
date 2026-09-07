@@ -1,0 +1,61 @@
+{
+  "synced_at": "2026-09-07 14:54:35",
+  "combin_id": "261944300000051189",
+  "combin_name": "翻81681",
+  "manager": "聪明的企业家6",
+  "account": {
+    "initial_principal": 50000,
+    "principal_label": "人为控制实际本金5万",
+    "total_assets": 51151.38,
+    "total_return_pct": 2.3,
+    "position_pct": 0.0,
+    "cash": 51151.38,
+    "pos_value": 0,
+    "start_date": "2026年07月14日",
+    "deal_rate": 33.33,
+    "deal_win": 3,
+    "deal_fail": 6,
+    "daily_pnl": null,
+    "prev_total_assets": null
+  },
+  "positions": [],
+  "recent_trades": [
+    {
+      "time": "2026-09-04 14:53",
+      "name": "兖矿能源",
+      "mmbz": "卖",
+      "price": "21.53"
+    },
+    {
+      "time": "2026-09-04 14:50",
+      "name": "申菱环境",
+      "mmbz": "卖",
+      "price": "103.05"
+    },
+    {
+      "time": "2026-09-04 14:49",
+      "name": "亨通光电",
+      "mmbz": "卖",
+      "price": "61.78"
+    },
+    {
+      "time": "2026-09-03 11:08",
+      "name": "亨通光电",
+      "mmbz": "买",
+      "price": "65.30"
+    },
+    {
+      "time": "2026-09-03 10:56",
+      "name": "兖矿能源",
+      "mmbz": "买",
+      "price": "22.13"
+    },
+    {
+      "time": "2026-09-03 10:27",
+      "name": "兖矿能源",
+      "mmbz": "买",
+      "price": "22.40"
+    }
+  ],
+  "trade_count": 34
+}
