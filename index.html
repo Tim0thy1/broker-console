@@ -947,7 +947,7 @@ loadSnapshot()
 
 /* ============ GitHub 直写 JSON（省token · 记录与反思） ============ */
 (function(){
-  const CFGrepo='trading-review-console',
+  const CFGrepo='Tim0thy1/broker-console',
     F={forecast:'data/forecast.json',reflect:'data/reflection.json',journal:'data/journal.json'};
   const K_T='rc_ghToken',K_R='rc_ghRepo',K_D='rc_draft';
   let ghToken=localStorage.getItem(K_T)||'';
@@ -1020,7 +1020,7 @@ loadSnapshot()
         return ghPut(F.forecast,arr,sha);
       }).then(()=>{this.textContent='🔒 今日已锁定并写入仓库';alert('✅ 预测已写入 forecast.json');})
         .catch(e=>{this.textContent='🔒 锁定并提交预测';this.disabled=false;
-          alert('写入失败('+(e.code||'网络')+')，请在设置页检查Token与仓库。');});
+          alert('写入失败('+(e.code||'网络')+') → 仓库 '+ghRepo+'，请在设置页确认仓库名和Token。');});
     });
   }
 
