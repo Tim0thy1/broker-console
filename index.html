@@ -482,11 +482,14 @@ textarea:focus,input:focus{outline:none;border-color:var(--brand);box-shadow:0 0
       </div>
 
       <div class="sec">
-        <div class="sec-t"><span class="t">🧘 修炼手记 · 本地草稿</span><span class="s">本机随意记 · 不耗token</span></div>
+        <div class="sec-t"><span class="t">🧘 修炼手记 · 草稿</span><span class="s">本机自动存 + 可写GitHub</span></div>
         <div class="field"><label>今日感悟 / 待提炼素材</label>
-          <textarea rows="4" id="jDraft" placeholder="随便写，自动保存到本机。攒几天后导出给AI提炼成正式手记。"></textarea>
+          <textarea rows="4" id="jDraft" placeholder="随便写，自动保存到本机。点下方按钮可同步到 GitHub journal.json，攒几天后导出给AI提炼成正式手记。"></textarea>
         </div>
-        <div class="a-comment" id="draftStatus">自动保存到本机浏览器</div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn" id="jSave" style="background:var(--red,#d32f2f)"><span class="b-i">💾</span> 保存手记到GitHub</button>
+          <div class="a-comment" id="draftStatus" style="flex:1;min-width:120px">自动保存到本机浏览器</div>
+        </div>
       </div>
 
       <div class="sec">
@@ -1066,6 +1069,34 @@ loadSnapshot()
       localStorage.setItem(K_D,draft.value);
       document.getElementById('draftStatus').textContent='✅ 已自动保存本机 · '+new Date().toLocaleTimeString();
     });
+    const jbn=document.getElementById('jSave');
+    if(jbn){
+      jbn.addEventListener('click',()=>{
+        const content=draft.value.trim();
+        const st=document.getElementById('draftStatus');
+        if(!content){st.textContent='请先写点内容再保存';return}
+        if(!ghToken){st.textContent='未连接GitHub，无法写回仓库。请先在设置页配置Token。';return}
+        jbn.textContent='⏳ 写入中…';jbn.disabled=true;
+        ghGet(F.journal).then(({data,sha})=>{
+          const es=(data&&data.entries)||[];
+          const todayIdx=es.findIndex(e=>e.date===TODAY);
+          const newEntry={date:TODAY,content:content,latest:true,updated:new Date().toISOString()};
+          if(todayIdx>=0){es[todayIdx]={...es[todayIdx],...newEntry};}
+          else{es.unshift(newEntry);}
+          // 当天条目置 latest，其余清掉
+          es.forEach(e=>{e.latest = e.date===TODAY;});
+          return ghPut(F.journal,{entries:es},sha);
+        }).then(()=>{
+          localStorage.setItem(K_D,content);
+          jbn.textContent='💾 保存手记到GitHub';jbn.disabled=false;
+          st.textContent='✅ 已保存至 GitHub journal.json · '+new Date().toLocaleTimeString();
+          loadJournal();
+        }).catch(e=>{
+          jbn.textContent='💾 保存手记到GitHub';jbn.disabled=false;
+          st.textContent='写入失败('+(e.code||'网络')+') → 仓库 '+ghRepo+'，请在设置页确认仓库名和Token。';
+        });
+      });
+    }
   }
   function loadJournal(){
     if(!ghToken){const w=document.getElementById('jList');if(w)w.innerHTML='<div class="empty">未连接GitHub，无法读取修炼手记。</div>';return}
