@@ -1,0 +1,54 @@
+# 东方财富模拟组合「翻81681」自动同步
+# ---------------------------------------------------------------
+# 说明：定时运行 sync_eastmoney.py，从东财接口拉取最新组合数据，
+#       写入 live-snapshot.json，并推送到仓库（GitHub Pages 随即更新）。
+#       上线后若要启用定时任务，把 schedule 的注释去掉即可。
+name: 同步东财模拟盘
+
+on:
+  # 定时同步（默认已注释，不自动跑；放开即启用）
+  # schedule:
+  #   - cron: "0 9,11,13,15 * * 1-5"   # 工作日 9:00/11:00/13:00/15:00 (UTC=A股午前/午后/收盘)
+  #   - cron: "30 15 * * 5"            # 周五收盘后 15:30 (UTC)
+  # 手动触发
+  workflow_dispatch:
+    inputs:
+      push:
+        description: "是否将结果推送到仓库(pages)"
+        required: false
+        default: "true"
+        type: choice
+        options: ["true", "false"]
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+
+      - name: 设置 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: 运行东财同步脚本
+        run: |
+          python broker-console/sync_eastmoney.py \
+            --out broker-console/live-full.json \
+            --snap-dir broker-console
+
+      - name: 展示同步结果
+        run: |
+          echo "== 同步摘录 =="
+          python -c "import json;d=json.load(open('broker-console/live-snapshot.json'));a=d['account'];print('同步时间',d['synced_at']);print('总资产',a['total_assets']);print('收益率%',a['total_return_pct']);print('持仓数',len(d['positions']));print('调仓数',d['trade_count'])"
+
+      - name: 提交并推送快照
+        if: github.event.inputs.push != 'false'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add broker-console/live-snapshot.json broker-console/live-full.json
+          git diff --cached --quiet && echo "无变化" || { git commit -m "chore(必有数据): 同步东财模拟盘 $(date +%F)"; git push; }
