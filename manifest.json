@@ -1,0 +1,12 @@
+{
+  "name": "模拟盘 · 智能交易控制台",
+  "short_name": "模拟盘",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#c4282e",
+  "theme_color": "#c4282e",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
